@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Icon from '@/components/ui/icon';
 import { toast } from "sonner";
+import HeroSection from "@/components/HeroSection";
+import ContractorsCatalog from "@/components/ContractorsCatalog";
+import ProjectsPortfolio from "@/components/ProjectsPortfolio";
+import ArticlesSection from "@/components/ArticlesSection";
 
 interface Contractor {
   id: number;
@@ -185,266 +186,24 @@ const Index = () => {
         </div>
       </header>
 
-      <section className="bg-gradient-to-b from-primary/5 to-background py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
-              Найдите надежного подрядчика для строительства дома
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Сравните компании по рейтингу, ценам, гарантиям и срокам. Все проверенные застройщики в одном месте.
-            </p>
-          </div>
+      <HeroSection 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedSpecialization={selectedSpecialization}
+        setSelectedSpecialization={setSelectedSpecialization}
+      />
 
-          <div className="max-w-4xl mx-auto">
-            <Card className="shadow-lg">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <Input
-                      placeholder="Найти подрядчика..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-12"
-                    />
-                  </div>
-                  <Select value={selectedSpecialization} onValueChange={setSelectedSpecialization}>
-                    <SelectTrigger className="w-full md:w-64 h-12">
-                      <SelectValue placeholder="Специализация" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Все специализации</SelectItem>
-                      <SelectItem value="Каркасные">Каркасные дома</SelectItem>
-                      <SelectItem value="Кирпичные">Кирпичные дома</SelectItem>
-                      <SelectItem value="Дома из бруса">Дома из бруса</SelectItem>
-                      <SelectItem value="Монолитное">Монолитное строительство</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button className="h-12 px-8">
-                    <Icon name="Search" className="mr-2" size={20} />
-                    Найти
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+      <ContractorsCatalog 
+        contractors={filteredContractors}
+        handleContactSubmit={handleContactSubmit}
+      />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">350+</div>
-              <div className="text-muted-foreground">Подрядчиков</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">2500+</div>
-              <div className="text-muted-foreground">Проектов</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">4.8</div>
-              <div className="text-muted-foreground">Средний рейтинг</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">100%</div>
-              <div className="text-muted-foreground">Проверено</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ProjectsPortfolio 
+        projects={projects}
+        contractors={contractors}
+      />
 
-      <section id="catalog" className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Каталог подрядчиков</h2>
-              <p className="text-muted-foreground">Найдено {filteredContractors.length} компаний</p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredContractors.map((contractor) => (
-              <Card key={contractor.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <CardTitle className="text-xl mb-1">{contractor.name}</CardTitle>
-                      <CardDescription className="flex items-center gap-1">
-                        <Icon name="MapPin" size={14} />
-                        {contractor.location}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded">
-                      <Icon name="Star" size={16} className="text-primary fill-primary" />
-                      <span className="font-semibold text-primary">{contractor.rating}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mb-2">
-                    {contractor.specialization.map((spec, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {spec}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">{contractor.description}</p>
-                  
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground">
-                        <Icon name="Award" size={16} />
-                        Опыт
-                      </span>
-                      <span className="font-semibold">{contractor.experience}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground">
-                        <Icon name="ShieldCheck" size={16} />
-                        Гарантия
-                      </span>
-                      <span className="font-semibold">{contractor.warranty}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground">
-                        <Icon name="Clock" size={16} />
-                        Сроки
-                      </span>
-                      <span className="font-semibold">{contractor.deadline}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground">
-                        <Icon name="Banknote" size={16} />
-                        Стоимость
-                      </span>
-                      <span className="font-semibold text-primary">{contractor.price}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
-                    <span>{contractor.projectsCompleted} проектов</span>
-                    <span>{contractor.reviewsCount} отзывов</span>
-                  </div>
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="w-full">
-                        <Icon name="MessageSquare" className="mr-2" size={18} />
-                        Оставить заявку
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Связаться с подрядчиком</DialogTitle>
-                        <DialogDescription>
-                          {contractor.name} свяжется с вами в течение 24 часов
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={handleContactSubmit} className="space-y-4">
-                        <div>
-                          <Label htmlFor="name">Ваше имя</Label>
-                          <Input id="name" placeholder="Иван Иванов" required />
-                        </div>
-                        <div>
-                          <Label htmlFor="phone">Телефон</Label>
-                          <Input id="phone" type="tel" placeholder="+7 (___) ___-__-__" required />
-                        </div>
-                        <div>
-                          <Label htmlFor="message">Сообщение</Label>
-                          <Textarea
-                            id="message"
-                            placeholder="Расскажите о вашем проекте..."
-                            rows={4}
-                          />
-                        </div>
-                        <Button type="submit" className="w-full">Отправить заявку</Button>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="projects" className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">Портфолио проектов</h2>
-            <p className="text-muted-foreground">Завершенные дома наших подрядчиков</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => {
-              const contractor = contractors.find(c => c.id === project.contractorId);
-              return (
-                <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video bg-muted flex items-center justify-center">
-                    <Icon name="Home" size={64} className="text-muted-foreground/20" />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{project.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-1">
-                      <Icon name="Building2" size={14} />
-                      {contractor?.name}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="text-muted-foreground">Площадь</div>
-                        <div className="font-semibold">{project.area}</div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Стоимость</div>
-                        <div className="font-semibold text-primary">{project.cost}</div>
-                      </div>
-                      <div className="col-span-2">
-                        <div className="text-muted-foreground">Срок строительства</div>
-                        <div className="font-semibold">{project.duration}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section id="articles" className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">Полезные статьи</h2>
-            <p className="text-muted-foreground">Советы и рекомендации по строительству</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {articles.map((article) => (
-              <Card key={article.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline">{article.category}</Badge>
-                    <span className="text-xs text-muted-foreground">{article.date}</span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Icon name="Clock" size={12} />
-                      {article.readTime}
-                    </span>
-                  </div>
-                  <CardTitle className="text-xl hover:text-primary transition-colors">
-                    {article.title}
-                  </CardTitle>
-                  <CardDescription>{article.excerpt}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="ghost" className="p-0 h-auto font-semibold text-primary">
-                    Читать далее
-                    <Icon name="ArrowRight" size={16} className="ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ArticlesSection articles={articles} />
 
       <section id="contact" className="py-16 bg-primary/5">
         <div className="container mx-auto px-4">
